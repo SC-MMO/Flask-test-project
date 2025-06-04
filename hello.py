@@ -1,10 +1,22 @@
-from flask import Flask, redirect, url_for, render_template, request, make_response
+from flask import Flask, redirect, url_for, render_template, request, make_response, abort, Response, session
 from werkzeug.utils import secure_filename
+from time import sleep
 
 app = Flask(__name__)
 
-
 UPLOAD_FOLDER = r'./uploads/'
+
+def generate():
+    yield "1,"
+    sleep(1)
+    yield "2"
+
+@app.route('/test')
+def test():
+    #return generate()
+    #return Response(generate())
+    #return make_response(generate())
+    ...
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
@@ -24,35 +36,40 @@ def upload_file():
             </form>
         '''
 
-@app.route('/set_username')
-def set_username():
-    username = request.form.get('username')
-    return fr'{username}'
+@app.route('/admin')
+def admin():
+    username = request.cookies.get('username')
+    if str(username) == 'None':
+        return redirect('/')
+    if username == 'admin':
+        return fr'Moin Kaptain'
+    abort(401)
+from flask import Flask, request, redirect, render_template, session, url_for
+
+app = Flask(__name__)
+app.secret_key = 'your_secret_key_here'  # Replace with a secure random key
 
 @app.route('/')
 def index():
-    username = request.cookies.get('username')
+    username = session.get('username')
     if username:
         return f"<h1>Welcome, {username}!</h1>"
-    return redirect('/login')
-
+    return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # Get inputted values from form
         username = request.form.get('username')
-        password = request.form.get('password')
+        session['username'] = username  # Store in session
+        return redirect(url_for('index'))
 
-        # Here you could check the username/password, e.g., validate with a database
-
-        # For now, just set a cookie and redirect
-        resp = make_response(redirect('/'))
-        resp.set_cookie('username', username)
-        return resp
-
-    # If GET request, just show the login form
     return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('login'))
+
 
 # @app.route('/')
 # def root():
