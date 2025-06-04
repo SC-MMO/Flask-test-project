@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Home</title>
+</head>
+<body>
+    <h1>Root</h1>
+    <ul id="navigation">
+    {% for item in urls %}
+        <li><a href="{{ item.url }}">{{ item.text }}</a></li>
+    {% endfor %}
+    </ul>
+
+</body>
+</html>
