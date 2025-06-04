@@ -1,22 +1,27 @@
+import logging
 from flask import Flask, redirect, url_for, render_template, request, make_response, abort, Response, session
 from werkzeug.utils import secure_filename
 from time import sleep
+import secrets
 
 app = Flask(__name__)
+app.secret_key = secrets.token_hex(16)
 
-UPLOAD_FOLDER = r'./uploads/'
+app.logger.handlers.clear()
+app.logger.setLevel(logging.DEBUG)
 
-def generate():
-    yield "1,"
-    sleep(1)
-    yield "2"
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s')
+console_handler.setFormatter(formatter)
+
+app.logger.addHandler(console_handler)
 
 @app.route('/test')
 def test():
-    #return generate()
-    #return Response(generate())
-    #return make_response(generate())
-    ...
+    app.logger.debug('test')
+    return "Test completed"
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
@@ -38,16 +43,12 @@ def upload_file():
 
 @app.route('/admin')
 def admin():
-    username = request.cookies.get('username')
+    username = session.get('username')
     if str(username) == 'None':
         return redirect('/')
     if username == 'admin':
         return fr'Moin Kaptain'
     abort(401)
-from flask import Flask, request, redirect, render_template, session, url_for
-
-app = Flask(__name__)
-app.secret_key = 'your_secret_key_here'  # Replace with a secure random key
 
 @app.route('/')
 def index():
@@ -70,6 +71,10 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
 
+@app.route('/hello/')
+def hello():
+    return 'Hello, World'
+
 
 # @app.route('/')
 # def root():
@@ -80,17 +85,6 @@ def logout():
 #     ]
 #     return render_template('list.html', urls=available_links)
 
-# @app.route('/home/')
-# def home():
-#     return 'The home page'
-
-# @app.route('/hello/')
-# def hello():
-#     return 'Hello, World'
-
-# @app.route('/projects/')
-# def projects():
-#     return 'The project page'
 
 
 # class URLLink:
