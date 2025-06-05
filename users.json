@@ -1,0 +1,17 @@
+[
+    {
+        "username": "admin",
+        "email": "admin@admin.de",
+        "password": "admin"
+    },
+    {
+        "username": "test",
+        "email": "moritz.mummert@t-online.de",
+        "password": "ffgdfgfd"
+    },
+    {
+        "username": "newuser123",
+        "email": "sadsa@de.ee",
+        "password": "asdasd"
+    }
+]
