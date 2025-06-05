@@ -6,17 +6,9 @@ import secrets
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
-
-app.logger.handlers.clear()
 app.logger.setLevel(logging.DEBUG)
 
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.DEBUG)
-
 formatter = logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s')
-console_handler.setFormatter(formatter)
-
-app.logger.addHandler(console_handler)
 
 @app.route('/test')
 def test():
