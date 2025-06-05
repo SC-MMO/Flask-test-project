@@ -1,7 +1,8 @@
-<!doctype html>
-<html>
-<head><title>Login</title></head>
-<body>
+{% extends 'index.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
   <h2>Login</h2>
   <form method="POST" action="/login">
     <label>Username:</label>
@@ -10,5 +11,9 @@
     <input type="password" name="password" required><br><br>
     <input type="submit" value="Login">
   </form>
-</body>
-</html>
+  <br>
+  <small>I don't have an account</small>
+  <form action="/sign-up">
+    <input type="submit" value="Sign-Up" />
+  </form>
+{% endblock %}
