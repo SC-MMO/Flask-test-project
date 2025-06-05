@@ -1,8 +1,9 @@
 import logging
-from flask import Flask, redirect, url_for, render_template, request, make_response, abort, Response, session
+from flask import Flask, redirect, url_for, render_template, request, make_response, abort, Response, session, flash
 from werkzeug.utils import secure_filename
 from time import sleep
 import secrets
+from functools import wraps
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
@@ -10,30 +11,59 @@ app.logger.setLevel(logging.DEBUG)
 
 formatter = logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s')
 
+
+#* Decorators
+
+def dec(func):
+    @wraps(func)  # This preserves the original function's name and other metadata
+    def wrapper(*args, **kwargs):
+        app.logger.debug(f'Called {func.__name__}')
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            app.logger.error(f'Error in {func.__name__}: {e}', exc_info=True)
+            return redirect('/')
+    return wrapper
+
+
+#* Routes
+
 @app.route('/test')
+@dec
 def test():
-    app.logger.debug('test')
     return "Test completed"
 
-@app.route('/upload', methods=['GET', 'POST'])
-def upload_file():
+@app.route('/hello/')
+@dec
+def hello():
+    return 'Hello, World'
+
+@app.route('/')
+@dec
+def index():
+    username = session.get('username')
+    if username:
+        return f"<h1>Welcome, {username}!</h1>"
+    return redirect(url_for('login'))
+
+@app.route('/login', methods=['GET', 'POST'])
+@dec
+def login():
     if request.method == 'POST':
-        if 'the_file' not in request.files:
-            return "no file provided"
-        
-        f = request.files['the_file']
-        
-        f.save(fr'./uploads/{secure_filename(f.filename)}')
-        return "File uploaded"
-    else:
-        return '''
-            <form method="post" enctype="multipart/form-data">
-                <input type="file" name="the_file">
-                <input type="submit">
-            </form>
-        '''
+        username = request.form.get('username')
+        session['username'] = username
+        return redirect(url_for('index'))
+
+    return render_template('login.html')
+
+@app.route('/logout')
+@dec
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('login'))
 
 @app.route('/admin')
+@dec
 def admin():
     username = session.get('username')
     if str(username) == 'None':
@@ -42,30 +72,31 @@ def admin():
         return fr'Moin Kaptain'
     abort(401)
 
-@app.route('/')
-def index():
-    username = session.get('username')
-    if username:
-        return f"<h1>Welcome, {username}!</h1>"
-    return redirect(url_for('login'))
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
+@app.route('/upload', methods=['GET', 'POST'])
+@dec
+def upload_file():
     if request.method == 'POST':
-        username = request.form.get('username')
-        session['username'] = username  # Store in session
-        return redirect(url_for('index'))
+        if 'the_file' not in request.files:
+            return "no file provided"
+        
+        f = request.files['the_file']
+        
+        f.save(fr'./uploads/{secure_filename(f.filename)}')
+        flash('File uploaded successfully')
+        return "File uploaded successfully"
 
-    return render_template('login.html')
+    else:
+        return render_template('upload.html')
+    
 
-@app.route('/logout')
-def logout():
-    session.pop('username', None)
-    return redirect(url_for('login'))
 
-@app.route('/hello/')
-def hello():
-    return 'Hello, World'
+
+
+
+
+
+
+
 
 
 # @app.route('/')
