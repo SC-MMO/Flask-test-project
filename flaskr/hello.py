@@ -16,7 +16,7 @@ toastr = Toastr(app)
 #* Decorators
 
 def dec(func):
-    @wraps(func)  # This preserves the original function's name and other metadata
+    @wraps(func) 
     def wrapper(*args, **kwargs):
         app.logger.debug(f'Called {func.__name__}')
         try:
@@ -28,6 +28,22 @@ def dec(func):
 
 
 #* Routes
+
+
+@app.route('/test')
+@dec
+def test():
+    # Error version doesnt work yet
+    flash('Test was a success!', 'success')
+    return redirect('/')
+
+@app.route('/')
+@dec
+def index():
+    username = session.get('username')
+    if username:
+        return render_template('homepage/index.html')
+    return redirect(url_for('login'))
 
 @app.route('/sign-up', methods=["GET", "POST"])
 def sign_up():
@@ -55,26 +71,7 @@ def sign_up():
         flash("Username already exists", "error")
         return redirect('/sign-up')
 
-    return render_template("sign_up.html")
-
-@app.route('/test')
-@dec
-def test():
-    flash('testflash')
-    return "Test completed"
-
-@app.route('/hello/')
-@dec
-def hello():
-    return 'Hello, World'
-
-@app.route('/')
-@dec
-def index():
-    username = session.get('username')
-    if username:
-        return f"<h1>Welcome, {username}!</h1>"
-    return redirect(url_for('login'))
+    return render_template("auth/sign_up.html")
 
 @app.route('/login', methods=['GET', 'POST'])
 @dec
@@ -93,7 +90,7 @@ def login():
 
         return redirect(url_for('index'))
 
-    return render_template('login.html')
+    return render_template('auth/login.html')
 
 @app.route('/logout')
 @dec
@@ -126,7 +123,7 @@ def upload_file():
         return "File uploaded successfully"
 
     else:
-        return render_template('upload.html')
+        return render_template('upload/upload.html')
     
 
 
@@ -146,8 +143,7 @@ def upload_file():
 #         URLLink(url=url_for('hello'), text='Hello'),
 #         URLLink(url=url_for('projects'), text='Projects')
 #     ]
-#     return render_template('list.html', urls=available_links)
-
+#     return render_template('homepage/list.html', urls=available_links)
 
 
 # class URLLink:

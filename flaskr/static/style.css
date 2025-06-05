@@ -21,10 +21,15 @@
 }
 
 body {
-    background: #efefef; 
+    background-image: url('https://static.vecteezy.com/system/resources/thumbnails/049/609/660/small_2x/chartreux-cat-isolated-on-black-background-photo.jpeg');
+    background-repeat: no-repeat;
+    background-size: cover;
+
     font-family: 'Roboto', sans-serif;
     padding: 7%;
     overflow-x: hidden;
+
+    color: rgb(255, 255, 255);
 }
 
 .buttonHolder {
@@ -36,7 +41,7 @@ button {
     background: #242e77;
     border: 0;
     border-radius: 10px;
-    color: #fff;
+    color: #ffffff;
     padding: 10px 25px;
     margin: 0 10px;
     font: 20px/1.6 'Roboto', sans-serif;
@@ -55,7 +60,8 @@ button:hover {
 }
 
 .toast {
-    background: #fff;
+    background: #ffffff;
+    color: #000000;
     padding: 20px;
     margin-bottom: 20px;
     display: flex;

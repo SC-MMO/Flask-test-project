@@ -13,5 +13,10 @@
         "username": "newuser123",
         "email": "sadsa@de.ee",
         "password": "asdasd"
+    },
+    {
+        "username": "admina",
+        "email": "moritz.mummert@t-online.de",
+        "password": "sadf"
     }
 ]
