@@ -1,49 +1,92 @@
-/* Sweet background gradient */
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+@keyframes borderShrink {
+    100% {
+        width: 0;
+    }
+}
+
+@keyframes slideLeft {
+    0% {
+        transform: translateX(100%)
+    }
+    100% {
+        transform: translateX(0)
+    }
+}
+* { 
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    background: #efefef; 
+    font-family: 'Roboto', sans-serif;
+    padding: 7%;
+    overflow-x: hidden;
 }
 
-/* Glassmorphism container */
-.card {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  padding: 40px;
-  max-width: 400px;
-  text-align: center;
-  color: #fff;
-  transition: all 0.3s ease-in-out;
+.buttonHolder {
+display: flex;
+justify-content: center;
 }
 
-/* Add some hover sweetness */
-.card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-}
-
-/* Sweet button */
 button {
-  background: #ffffff33;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 30px;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  margin-top: 20px;
-  transition: background 0.3s ease;
+    background: #242e77;
+    border: 0;
+    border-radius: 10px;
+    color: #fff;
+    padding: 10px 25px;
+    margin: 0 10px;
+    font: 20px/1.6 'Roboto', sans-serif;
+    cursor: pointer;
+    transition: opacity 0.3s linear;
 }
 
 button:hover {
-  background: rgba(255, 255, 255, 0.5);
-  color: #333;
+    opacity: 0.8;
+}
+
+#toastNotification {
+    position: absolute;
+    bottom: 0;
+    right: 20px;
+}
+
+.toast {
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    min-width: 400px;
+    font-size: 18px;
+    position: relative;
+    animation: slideLeft 0.6s ease forwards
+}
+
+.toast i {
+    font-size: 28px;
+    color: #086108;
+    margin-right: 20px;
+}
+
+.toast.error i {
+    color: #be0707;
+}
+
+.toast:after {
+    content:  '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #086108;
+    animation: borderShrink 5s linear forwards;
+}
+
+.toast.error:after {
+    background: #be0707;
 }
