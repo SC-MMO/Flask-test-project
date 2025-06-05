@@ -1,0 +1,21 @@
+#toast-container > div {
+  font-size: 10px;
+  padding: 10px 15px;
+  min-width: 50px;
+  max-width: 100px;
+  border-radius: 6px;
+}
+
+.toast-title {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.toast-message {
+  font-size: 13px;
+}
+
+#toast-container {
+  top: 12px;
+  right: 12px;
+}
