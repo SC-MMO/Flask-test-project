@@ -1,18 +1,29 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}My App{% endblock %}</title>
-    {{ toastr.include_jquery() }}
-    {{ toastr.include_toastr_css() }}
-    {{ toastr.message() }}
-    <link rel="stylesheet" href="static/popup_style.css">
+    <title>{% block title %}Toast notification{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
-  
+
+    <div id="toastNotification">
+        {% if toast %}
+        <div class="toast {% if toast.type == 'error' %}error{% endif %}">
+            {% if toast.type == 'success' %}
+                <i class="fa-solid fa-circle-check"></i> {{ toast.message }}
+            {% else %}
+                <i class="fa-solid fa-circle-exclamation"></i> {{ toast.message }}
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
 
     {% block content %}{% endblock %}
-    {{ toastr.include_toastr_js() }}
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    {% block extra_scripts %}{% endblock %}
 </body>
 </html>
