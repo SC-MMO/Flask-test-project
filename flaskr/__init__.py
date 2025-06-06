@@ -1,18 +1,16 @@
-import os, logging, secrets, json
+import os, logging, json, pymongo
 
 from flask import Flask, redirect, url_for, render_template, request, abort, session, flash
 from werkzeug.utils import secure_filename
 from functools import wraps
+from flask_mongoengine import MongoEngine
 
-from user import user
+from .user import user
+from .models import Peasant, KingKong
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
-    app.config.from_mapping(
-        SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
-    )
     app.logger.setLevel(logging.DEBUG)
 
     if test_config is None:
@@ -27,6 +25,14 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
+    
+    # #access the database
+    db = MongoEngine()
+
+    app.secret_key = app.config['SECRET_KEY']
+    
+    db.init_app(app)
+
 
     #* Decorators
 
@@ -44,12 +50,30 @@ def create_app(test_config=None):
     #* Routes
 
 
-    @app.route('/test')
+    @app.route('/test1')
     @dec
-    def test():
-        # Error version doesnt work yet
-        flash('Test was a success!', 'success')
-        return redirect(url_for('index'))
+    def test1():
+        peasant = Peasant(name="Alice2", address="123 Main St")
+        peasant.save()
+
+        peasants = Peasant.objects()
+
+        peasants_list = [{"name": c.name, "address": c.address} for c in peasants]
+
+        return peasants_list
+    
+    @app.route('/test2')
+    @dec
+    def test2():
+        kingkong = KingKong(name="KingKong", address="123 Main St")
+        kingkong.save()
+
+        kingkongs = KingKong.objects()
+
+        kingkongs_list = [{"name": c.name, "address": c.address} for c in kingkongs]
+
+        return kingkongs_list
+    
 
     @app.route('/')
     @dec
@@ -70,17 +94,18 @@ def create_app(test_config=None):
             )
             new_user_dict = new_user.to_dict()
 
-            with open("./users.json", "r") as my_file:
-                users = json.load(my_file)
+            peasants = Peasant.objects()
+            kingkongs = KingKong.objects()
+            combined = list(peasants) + list(kingkongs)
 
-            if not any(u.get('username') == new_user.username for u in users):
-                users.append(new_user_dict)
-                app.logger.debug(users)
-                with open("./users.json", "w") as my_file:
-                    json.dump(users, my_file, indent=4)
+            existing_users = [{"username": c.name} for c in combined]
+
+            if not any(new_user.username == u.get('username') for u in existing_users):
+                peasant = Peasant(name=new_user.username, address=new_user.email, password=new_user.password)
+                peasant.save()
 
                 session['username'] = new_user.username
-                return redirect(url_for(index))
+                return redirect(url_for('index'))
             
             flash("Username already exists", "error")
             return redirect(url_for('sign_up'))
@@ -94,13 +119,16 @@ def create_app(test_config=None):
             return redirect('/')
         if request.method == 'POST':
             req = request.form
-            a_user = user(username=req.get('username'), password=req.get('password'), email="N/A").__dict__
-            with open("./users.json", "r") as my_file:
-                users = json.load(my_file)
-                for u in users:
-                    if a_user.get('username') == u.get('username') and a_user.get('password') == u.get('password'):
-                        session['username'] = req.get('username')
-                        break
+            a_user = user(username=req.get('username'), password=req.get('password'), email="N/A")
+
+            peasants = Peasant.objects()
+            kingkongs = KingKong.objects()
+            combined = list(peasants) + list(kingkongs)
+
+            existing_users = [{"username": c.name, "password": c.password} for c in combined]
+
+            if any((a_user.username == u.get('username')) and (a_user.password == u.get('password')) for u in existing_users):
+                session['username'] = req.get('username')
 
             return redirect(url_for('index'))
 
@@ -120,7 +148,7 @@ def create_app(test_config=None):
         if str(username) == 'None':
             return redirect(url_for('index'))
         if username == 'admin':
-            return fr'Moin Kaptain'
+            return render_template('admin/admin.html')
         abort(401)
 
     @app.route('/upload', methods=['GET', 'POST'])
@@ -140,5 +168,3 @@ def create_app(test_config=None):
             return render_template('upload/upload.html')
 
     return app
-
-app = create_app()
