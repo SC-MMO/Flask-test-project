@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Homepage{% endblock %}
 
 {% block content %}
 <head>
@@ -8,7 +8,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Document</title>
 </head>
-<body> 
-  Homepage for now
-</body>
+
+<nav>
+  <ul>
+    {% if session['username'] %}
+      <h1>Hi {{ session['username'] }}</h1>
+      <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
+    {% else %}
+      <h3>Navigation</h3>
+      <li><a href="{{ url_for('auth.sign_up') }}">Register</a>
+      <li><a href="{{ url_for('auth.login') }}">Log In</a>
+    {% endif %}
+  </ul>
+</nav>
 {% endblock %}
