@@ -1,14 +1,25 @@
 from flask import (
     Blueprint, flash, redirect, render_template, request, session, url_for
 )
-
+from functools import wraps
 from .user import user
 from .models import SiteUser
 
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
+#Decorator
+def login_required(view):
+    @wraps(view)
+    def wrapped_view(**kwargs):
+        if not session.get('username', ""):
+            return redirect(url_for('auth.login'))
 
+        return view(**kwargs)
+
+    return wrapped_view
+
+#Routes
 @auth_bp.route('/sign-up', methods=["GET", "POST"])
 def sign_up():
     if request.method == "POST":
@@ -29,6 +40,7 @@ def sign_up():
             a_user.save()
 
             session['username'] = new_user.username
+            session['id'] = a_user._id
             return redirect(url_for('index'))
         
         flash("Username already exists", "error")
@@ -48,9 +60,10 @@ def login():
 
         existing_users = [{"username": c.name, "password": c.password} for c in users]
 
-        if any((a_user.username == u.get('username')) and (a_user.password == u.get('password')) for u in existing_users):
-            session['username'] = req.get('username')
-
+        for u in users:
+            if a_user.username == u.name and a_user.password == u.password:
+                session['username'] = req.get('username')
+                session['id'] = str(u.pk)
         return redirect(url_for('index'))
 
     return render_template('auth/login.html')

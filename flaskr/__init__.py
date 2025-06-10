@@ -53,11 +53,12 @@ def create_app(test_config=None):
     from .upload import upload_bp
     app.register_blueprint(upload_bp)
 
+    from .blog import blog_bp
+    app.register_blueprint(blog_bp)
+    
     @app.route('/')
-    @dec
     def index():
         username = session.get('username')
         return render_template('homepage/index.html')
     
-
     return app
