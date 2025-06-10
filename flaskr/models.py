@@ -1,11 +1,6 @@
 from mongoengine import Document, StringField
 
-class Peasant(Document):
-    name = StringField(required=True)
-    address = StringField()
-    password = StringField(required=True)
-
-class KingKong(Document):
+class SiteUser(Document):
     name = StringField(required=True)
     address = StringField()
     password = StringField(required=True)
