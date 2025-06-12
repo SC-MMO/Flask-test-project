@@ -1,5 +1,5 @@
 from flask import (
-    Blueprint, redirect, render_template, session, url_for, abort
+    Blueprint, render_template, session, abort
 )
 from flaskr.auth import login_required
 from .models import SiteUser
