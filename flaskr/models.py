@@ -1,12 +1,11 @@
-from mongoengine import Document, StringField, DateTimeField, ReferenceField, EmailField
+from mongoengine import Document, StringField, DateTimeField, ReferenceField, EmailField, DictField
 from datetime import datetime
 
 class SiteUser(Document):
     name = StringField(required=True, max_length=100)
     address = EmailField()
     password = StringField(required=True)
-
-    
+    permissions = DictField(required=True)
 
 class Post(Document):
     title = StringField(required=True, max_length=200)
@@ -15,23 +14,6 @@ class Post(Document):
     author = ReferenceField(SiteUser, required=True)
     username = StringField()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    # meta = {
-    #     'ordering': ['-created_at'],  # newest blogs first
-    #     'indexes': ['author', 'created_at'],
-    # }
+class Role(Document):
+    name = StringField(required=True)
+    permissions = DictField(required=True)
