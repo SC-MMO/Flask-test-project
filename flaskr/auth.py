@@ -3,10 +3,20 @@ from flask import (
 )
 from functools import wraps
 from .user import user
-from .models import SiteUser
+from .models import SiteUser, Role
+
+from wtforms import Form, StringField, SubmitField, EmailField, PasswordField
+from wtforms.validators import DataRequired, Length
 
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
+
+
+class SignUpForm(Form):
+    name = StringField('Your Name', validators=[DataRequired(), Length(min=1, max= 100)])
+    email = EmailField('Your Email', validators=[DataRequired(), Length(min=1)])
+    password = PasswordField('Your Password', validators=[DataRequired(), Length(min=10, max=100)])
+    submit = SubmitField('Submit')
 
 #Decorator
 def login_required(view):
@@ -22,31 +32,28 @@ def login_required(view):
 #Routes
 @auth_bp.route('/sign-up', methods=["GET", "POST"])
 def sign_up():
-    if request.method == "POST":
-        req = request.form
-        new_user = user(
-            username=req.get('username'), 
-            email=req.get('email'), 
-            password=req.get('password')
-        )
-        new_user_dict = new_user.to_dict()
+    form = SignUpForm(request.form)
+    if request.method == "POST" and form.validate():
+        name = form.name.data
+        email = form.email.data
+        password = form.password.data
 
-        users = SiteUser.objects()
+        normal_permissions = Role.objects(name="Normal").first()['permissions']
+        a_user = SiteUser(name=name, address=email, password=password, permissions=normal_permissions)
+        existing_users = SiteUser.objects()
 
-        existing_users = [{"username": c.name} for c in users]
-
-        if not any(new_user.username == u.get('username') for u in existing_users):
-            a_user = SiteUser(name=new_user.username, address=new_user.email, password=new_user.password)
+        if not any(a_user.name == u.name for u in existing_users):
+            
             a_user.save()
 
-            session['username'] = new_user.username
-            session['id'] = a_user._id
+            session['username'] = a_user.name
+            session['id'] = str(a_user.id)
             return redirect(url_for('index'))
         
         flash("Username already exists", "error")
         return redirect(url_for('auth.sign_up'))
 
-    return render_template("auth/sign_up.html")
+    return render_template("auth/sign_up.html", form=form)
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
