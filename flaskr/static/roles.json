@@ -1,0 +1,14 @@
+{
+    "Admin": {
+        "permissions": {
+            "xd": true,
+            "admin": true
+        }
+    },
+    "Normal": {
+        "permissions": {
+            "admin": false,
+            "xd": true
+        }
+    }
+}
