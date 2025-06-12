@@ -1,13 +1,31 @@
-import os, logging
+import os
+import logging
+
 
 from flask import Flask, redirect, url_for, render_template, request, abort, session, flash
 from functools import wraps
 from flask_mongoengine import MongoEngine
+from logging.config import dictConfig
 
 def create_app(test_config=None):
     # create and configure the app
+    dictConfig({
+        'version': 1,
+        'formatters': {'default': {
+            'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+        }},
+        'handlers': {'wsgi': {
+            'class': 'logging.StreamHandler',
+            'stream': 'ext://flask.logging.wsgi_errors_stream',
+            'formatter': 'default'
+        }},
+        'root': {
+            'level': 'INFO',
+            'handlers': ['wsgi']
+        }
+    })
+    
     app = Flask(__name__, instance_relative_config=True)
-    app.logger.setLevel(logging.DEBUG)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -29,7 +47,11 @@ def create_app(test_config=None):
     
     db.init_app(app)
 
-
+    #* Init Roles
+    
+    from .roles import init_roles
+    init_roles()
+    
     #* Decorators (currently not used)
 
     def dec(func):
@@ -60,5 +82,12 @@ def create_app(test_config=None):
     def index():
         username = session.get('username')
         return render_template('homepage/index.html')
+    
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template('errors/404.html'), 404
+    @app.route('/404')
+    def four_o_four():
+        abort(404)
     
     return app
