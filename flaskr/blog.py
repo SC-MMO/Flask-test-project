@@ -56,25 +56,29 @@ def update(id):
 
     return render_template('blog/updates.html', post=post)
 
-@blog_bp.route('/<id>/delete', methods=('POST',))
+@blog_bp.route('/<id>/delete', methods=('GET', 'POST'))
 @login_required
 def delete(id):
     if not isinstance(id, int):
-        id = int(id)
+        id = str(id)
     post = get_post(id)
     post.delete()
-    return redirect(url_for('blog.posts'))
+    return redirect(url_for('blog.blogs'))
 
 @blog_bp.route('/test')
 @login_required
 def temp():
-    return redirect('68483befe3637d056c3986c7/update')
+    return redirect('684ae5457143ef665a8f0546/update')
 
 
 def get_post(id, check_author=True):
     post = Post.objects(id=id).first()
     if post is None:
         abort(404, f"Post id {id} doesn't exist.")
+
+    User = SiteUser.objects(name=session.get('username')).first()
+    if User.permissions.get("admin"):
+        check_author = False
 
     if check_author and str(post.author.id) != session['id']:
         abort(403)
