@@ -5,7 +5,8 @@ from werkzeug.exceptions import abort
 from flaskr.auth import login_required
 from .models import Post, SiteUser
 from typing import Union
-from wtforms import Form, StringField, SubmitField, EmailField, PasswordField
+from flask_wtf import FlaskForm
+from wtforms import Form, StringField, SubmitField, TextAreaField, HiddenField
 from wtforms.validators import DataRequired, Length
 
 blog_bp = Blueprint('blog', __name__)
@@ -16,6 +17,12 @@ class CreatePost(Form):
     body = StringField('Body', validators=[DataRequired(), Length(min=1, max= 1000)])
     submit = SubmitField('Submit')
 
+class UpdatePost(FlaskForm):
+    id = HiddenField()
+    title = StringField('Title', validators=[DataRequired(), Length(min=1, max= 100)])
+    body = TextAreaField('Body', validators=[DataRequired(), Length(min=1, max= 1000)])
+    save = SubmitField('Save')
+    delete = SubmitField('Delete')
 
 @blog_bp.route('/blogs')
 @login_required
@@ -42,24 +49,26 @@ def create():
 @login_required
 def update(id):
     post = get_post(id)
-    if request.method == 'POST':
-        title = request.form['title']
-        body = request.form['body']
-        error = None
 
-        if not title:
-            error = 'Title is required.'
-
-        if error is not None:
-            flash(error)
-
-        else:
-            post.title = title
-            post.body = body
+    if request.method == 'GET':
+        form = UpdatePost(data={'id': str(post.pk), 'title': post.title, 'body': post.body})
+    else:
+        form = UpdatePost(request.form)
+    
+    if request.method == 'POST' and form.validate():
+        if form.save.data:
+            post.title = form.title.data
+            post.body = form.body.data
             post.save()
-            return redirect(url_for('blog.blogs'))
+            flash("Post updated.")
 
-    return render_template('blog/updates.html', post=post)
+        elif form.delete.data:
+            post.delete()
+            flash("Post deleted.")
+
+        return redirect(url_for('blog.blogs'))
+
+    return render_template('blog/updates.html', post=post, form=form)
 
 @blog_bp.route('/<id>/delete', methods=('GET', 'POST'))
 @login_required
