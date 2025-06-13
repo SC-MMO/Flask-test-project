@@ -6,6 +6,10 @@ from flask import Flask, redirect, url_for, render_template, request, abort, ses
 from functools import wraps
 from flask_mongoengine import MongoEngine
 from logging.config import dictConfig
+from flask_bcrypt import Bcrypt
+
+
+bcrypt = Bcrypt()
 
 def create_app(test_config=None):
     # create and configure the app
@@ -51,6 +55,9 @@ def create_app(test_config=None):
     
     from .roles import init_roles
     init_roles()
+
+    #initialize password hasher
+    bcrypt.init_app(app)
     
     #* Decorators (currently not used)
 

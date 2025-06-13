@@ -2,12 +2,11 @@ from flask import (
     Blueprint, flash, redirect, render_template, request, session, url_for
 )
 from functools import wraps
-from .user import user
 from .models import SiteUser, Role
 
 from wtforms import Form, StringField, SubmitField, EmailField, PasswordField
 from wtforms.validators import DataRequired, Length
-
+from flaskr import bcrypt
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -41,7 +40,7 @@ def sign_up():
     if request.method == "POST" and form.validate():
         name = form.name.data
         email = form.email.data
-        password = form.password.data
+        password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
 
         normal_permissions = Role.objects(name="Normal").first()['permissions']
         a_user = SiteUser(name=name, address=email, password=password, permissions=normal_permissions)
@@ -62,20 +61,19 @@ def sign_up():
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    if str(session.get('username')) != 'None':
-        return redirect(url_for('index'))
-    
     form = LoginForm(request.form)
     if request.method == 'POST' and form.validate():
         name = form.name.data
         password = form.password.data
-        user = SiteUser.objects(name=name, password=password).first()
-
-        if user:
+        user = SiteUser.objects(name=name).first()
+        if not user or not bcrypt.check_password_hash(user.password, password):
+            flash("Invalid Credentials", "error")
+            return render_template('auth/login.html', form=form)
+        
+        else:
             session['username'] = name
             session['id'] = str(user.pk)
-
-        return redirect(url_for('index'))
+            return redirect(url_for('index'))
 
     return render_template('auth/login.html', form=form)
 
