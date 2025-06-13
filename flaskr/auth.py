@@ -11,11 +11,16 @@ from wtforms.validators import DataRequired, Length
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-
+# WTForms
 class SignUpForm(Form):
     name = StringField('Your Name', validators=[DataRequired(), Length(min=1, max= 100)])
     email = EmailField('Your Email', validators=[DataRequired(), Length(min=1)])
-    password = PasswordField('Your Password', validators=[DataRequired(), Length(min=10, max=100)])
+    password = PasswordField('Your Password', validators=[DataRequired(), Length(min=5, max=100)])
+    submit = SubmitField('Submit')
+
+class LoginForm(Form):
+    name = StringField('Your Name', validators=[DataRequired(), Length(min=1, max= 100)])
+    password = PasswordField('Your Password', validators=[DataRequired(), Length(min=5, max=100)])
     submit = SubmitField('Submit')
 
 #Decorator
@@ -58,22 +63,21 @@ def sign_up():
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if str(session.get('username')) != 'None':
-        return redirect('/')
-    if request.method == 'POST':
-        req = request.form
-        a_user = user(username=req.get('username'), password=req.get('password'), email="N/A")
+        return redirect(url_for('index'))
+    
+    form = LoginForm(request.form)
+    if request.method == 'POST' and form.validate():
+        name = form.name.data
+        password = form.password.data
+        user = SiteUser.objects(name=name, password=password).first()
 
-        users = SiteUser.objects()
+        if user:
+            session['username'] = name
+            session['id'] = str(user.pk)
 
-        existing_users = [{"username": c.name, "password": c.password} for c in users]
-
-        for u in users:
-            if a_user.username == u.name and a_user.password == u.password:
-                session['username'] = req.get('username')
-                session['id'] = str(u.pk)
         return redirect(url_for('index'))
 
-    return render_template('auth/login.html')
+    return render_template('auth/login.html', form=form)
 
 @auth_bp.route('/logout')
 def logout():
