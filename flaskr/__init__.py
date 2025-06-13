@@ -62,7 +62,7 @@ def create_app(test_config=None):
                 return func(*args, **kwargs)
             except Exception as e:
                 app.logger.error(f'Error in {func.__name__}: {e}', exc_info=True)
-                return redirect('/')
+                return redirect(url_for('index'))
         return wrapper
 
     #* Routes
