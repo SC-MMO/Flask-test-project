@@ -39,7 +39,7 @@ def create():
         title = form.title.data
         body = form.body.data 
 
-        post = Post(title=title, body=body, author=session['id'], username=SiteUser.objects(id=session['id']).first().name)
+        post = Post(title=title, body=body, author=session['id'])
         post.save()
         return redirect(url_for('blog.blogs'))
 
