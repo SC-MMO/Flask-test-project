@@ -10,7 +10,8 @@ admin_bp = Blueprint('admin', __name__)
 @admin_bp.route('/admin')
 @login_required
 def admin():
-    User = SiteUser.objects(name=session.get('username')).first()
-    if User.permissions.get("admin"):
+    user = SiteUser.objects(id=session.get('id')).first()
+    permissions = user.role.permissions
+    if permissions.get('admin'):
         return render_template('admin/admin.html')
-    abort(401)
+    abort(403)
