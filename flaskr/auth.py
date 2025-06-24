@@ -2,7 +2,7 @@ from flask import (
     Blueprint, flash, redirect, render_template, request, session, url_for
 )
 from functools import wraps
-from .models import SiteUser, Role
+from .models import SiteUser, Role, Image
 
 from wtforms import Form, StringField, SubmitField, EmailField, PasswordField
 from wtforms.validators import DataRequired, Length
@@ -42,8 +42,8 @@ def sign_up():
         email = form.email.data
         password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
 
-        normal_permissions = Role.objects(name="Normal").first()['permissions']
-        a_user = SiteUser(name=name, address=email, password=password, permissions=normal_permissions)
+        role = Role.objects(name="Normal").first()
+        a_user = SiteUser(name=name, address=email, password=password, role=role, profile_pic=Image.objects(name='default_profile_pic').first())
         existing_users = SiteUser.objects()
 
         if not any(a_user.name == u.name for u in existing_users):
