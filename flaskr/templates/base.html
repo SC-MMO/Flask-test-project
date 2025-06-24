@@ -12,9 +12,11 @@
   {% if session['username'] %}
     <h3>Hi {{ session['username'] }}</h3>
     <ul>
-      <li style="text-align:right;">
+      <li style="text-align:right; display: flex; align-items: center;">
         <a href="{{ url_for('auth.logout') }}">Log Out</a>
-        
+        <a style="padding:0;" href="{{ url_for('admin.admin') }}">
+          <img class="profile-pic" src="{{ profile_pic_data(session['id']) }}" style="width:30px; height:30px; border-radius:50%; padding:0.1rem;" />
+        </a>
       </li>
     </ul>
   {% else %}
