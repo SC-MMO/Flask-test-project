@@ -102,7 +102,7 @@ body {
       background-repeat: repeat;
       background-position: top left;
       background-attachment: local;
-      padding: 7%;
+      padding: 0;
     }
 
 h1 {
@@ -124,7 +124,7 @@ hr {
 nav {
   background: lightgray;
   display: flex;
-  align-items: center;
+  align-items: right;
   padding: 0 0.5rem;
 }
 
@@ -143,6 +143,7 @@ nav ul {
   list-style: none;
   margin: 0;
   padding: 0;
+  margin-left: auto;
 }
 
 nav ul li a,
@@ -205,6 +206,10 @@ header .action {
   font-size: 12px;
 }
 
+.nav .body {
+  padding: 0;
+}
+
 .content:last-child {
   margin-bottom: 0;
 }
@@ -244,5 +249,5 @@ input[type=submit] {
   flex-direction: column;
   justify-content: center;  /* vertical */
   align-items: center;      /* horizontal */
-
+  padding: 100px;
 }

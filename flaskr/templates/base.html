@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Toast notification{% endblock %}</title>
@@ -7,6 +8,27 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     {% block extra_head %}{% endblock %}
 </head>
+<nav>
+  {% if session['username'] %}
+    <h3>Hi {{ session['username'] }}</h3>
+    <ul>
+      <li style="text-align:right;">
+        <a href="{{ url_for('auth.logout') }}">Log Out</a>
+        
+      </li>
+    </ul>
+  {% else %}
+    <h3>Navigation</h3>
+    <ul>
+      <li style="text-align:right;">
+        <a href="{{ url_for('auth.sign_up') }}">Register</a>
+      </li>
+      <li style="text-align:right;">
+        <a href="{{ url_for('auth.login') }}">Log In</a>
+      </li>
+    </ul>
+  {% endif %}
+</nav>
 <body>
     <div id="toastNotification">
     {% with messages = get_flashed_messages(with_categories=True) %}
