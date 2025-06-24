@@ -97,4 +97,19 @@ def create_app(test_config=None):
     def four_o_four():
         abort(404)
     
+    import base64
+    from .models import SiteUser
+
+    @app.context_processor
+    def utility_processor():
+        def profile_pic_data(user_id):
+            user = SiteUser.objects(id=user_id).first()
+            if user and user.profile_pic and user.profile_pic.image_file:
+                image_data = user.profile_pic.image_file.read()
+                content_type = user.profile_pic.image_file.content_type or 'image/jpeg'
+                base64_data = base64.b64encode(image_data).decode('utf-8')
+                return f"data:{content_type};base64,{base64_data}"
+            return "/static/blank-profile-picture.webp"
+        return dict(profile_pic_data=profile_pic_data)
+
     return app
