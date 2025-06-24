@@ -92,7 +92,7 @@ def get_post(id:str, check_author:bool=True, only_check:bool=False) -> Union[boo
         abort(404, f"Post id {id} doesn't exist.")
     
     User = SiteUser.objects(name=session.get('username')).first()
-    if User.permissions.get("admin"):
+    if User.role.permissions.get("admin"):
         check_author = False
 
     if check_author and str(post.author.id) != session['id']:
