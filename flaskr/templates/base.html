@@ -8,29 +8,36 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     {% block extra_head %}{% endblock %}
 </head>
-<nav>
-  {% if session['username'] %}
-    <h3>Hi {{ session['username'] }}</h3>
-    <ul>
-      <li style="text-align:right; display: flex; align-items: center;">
+
+<nav class="menu">
+  <ul class="left-group">
+    <li><a>Hello there</a></li>
+    <li><a href="{{ url_for('blog.blogs') }}">Blogs</a></li>
+    <li><a href="{{ url_for('blog.create') }}">Create</a></li>
+  </ul>
+
+  <ul class="right-group">
+    {% if session['username'] %}
+    <li style="display: flex; align-items: center; gap: 0.5rem;">
         <a href="{{ url_for('auth.logout') }}">Log Out</a>
-        <a style="padding:0;" href="{{ url_for('admin.admin') }}">
+      </li>
+      <li>
+        <a href="{{ url_for('admin.admin') }}" style="padding: 0;">
           <img class="profile-pic" src="{{ profile_pic_data(session['id']) }}" style="width:30px; height:30px; border-radius:50%; padding:0.1rem;" />
         </a>
       </li>
-    </ul>
-  {% else %}
-    <h3>Navigation</h3>
-    <ul>
-      <li style="text-align:right;">
+      
+    {% else %}
+    <li style="margin-left: auto;">
         <a href="{{ url_for('auth.sign_up') }}">Register</a>
       </li>
       <li style="text-align:right;">
         <a href="{{ url_for('auth.login') }}">Log In</a>
       </li>
-    </ul>
-  {% endif %}
+       {% endif %}
+  </ul>
 </nav>
+
 <body>
     <div id="toastNotification">
     {% with messages = get_flashed_messages(with_categories=True) %}

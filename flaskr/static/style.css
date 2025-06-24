@@ -124,7 +124,6 @@ hr {
 nav {
   background: lightgray;
   display: flex;
-  align-items: right;
   padding: 0 0.5rem;
 }
 
@@ -250,4 +249,19 @@ input[type=submit] {
   justify-content: center;  /* vertical */
   align-items: center;      /* horizontal */
   padding: 100px;
+}
+
+.menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.left-group,
+.right-group {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  gap: 1rem; /* Even spacing between items */
 }
