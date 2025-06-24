@@ -83,3 +83,9 @@ def logout():
     #'session.clear()' maybe
     flash('logged out')
     return redirect(url_for('index'))
+
+@auth_bp.route('/delete')
+def delete_acc():
+    SiteUser.objects(id=session.get('id')).delete()
+    session.pop('username', 'id')
+    return redirect(url_for('index'))
