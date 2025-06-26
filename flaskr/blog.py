@@ -6,7 +6,7 @@ from flaskr.auth import login_required
 from .models import Post, SiteUser
 from typing import Union
 from flask_wtf import FlaskForm
-from wtforms import Form, StringField, SubmitField, TextAreaField, HiddenField
+from wtforms import Form, StringField, SubmitField, HiddenField, TextAreaField
 from wtforms.validators import DataRequired, Length
 
 blog_bp = Blueprint('blog', __name__)
@@ -14,7 +14,7 @@ blog_bp = Blueprint('blog', __name__)
 # WTForms
 class CreatePost(Form):
     title = StringField('Title', validators=[DataRequired(), Length(min=1, max= 100)])
-    body = StringField('Body', validators=[DataRequired(), Length(min=1, max= 1000)])
+    body = TextAreaField('Body', validators=[DataRequired(), Length(min=1, max= 1000)])
     submit = SubmitField('Submit')
 
 class UpdatePost(FlaskForm):
