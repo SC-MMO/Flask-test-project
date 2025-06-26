@@ -1,0 +1,70 @@
+@keyframes borderShrink {
+    100% {
+        width: 0;
+    }
+}
+
+@keyframes slideLeft {
+    0% {
+        transform: translateX(100%)
+    }
+    100% {
+        transform: translateX(0)
+    }
+}
+* { 
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#toastNotification {
+    position: absolute;
+    bottom: 0;
+    right: 20px;
+}
+
+.toast {
+    background: #ffffff;
+    color: #000000;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    min-width: 400px;
+    font-size: 18px;
+    position: relative;
+    animation: slideLeft 0.6s ease forwards
+}
+
+.toast i {
+    font-size: 28px;
+    color: #086108;
+    margin-right: 20px;
+}
+
+.toast.error i {
+    color: #be0707;
+}
+
+.toast:after {
+    content:  '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #086108;
+    animation: borderShrink 5s linear forwards;
+}
+
+.toast.error:after {
+    background: #be0707;
+}
+
+.flash {
+  margin: 1em 0;
+  padding: 1em;
+  background: #cae6f6;
+  border: 1px solid #377ba8;
+}

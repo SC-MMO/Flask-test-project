@@ -1,0 +1,34 @@
+.post > header {
+  display: flex;
+  align-items: flex-end;
+  font-size: 0.85em;
+}
+
+.post {
+  padding-inline: 80px;
+}
+
+.post > header > div:first-of-type {
+  flex: auto;
+}
+
+.post > header h1 {
+  font-size: 1.5em;
+  margin-bottom: 0;
+  font-size: 30px;
+}
+
+.post .about {
+  color: slategray;
+  font-style: italic;
+}
+
+.post .body {
+  white-space: pre-line;
+  font-size: 12px;
+}
+
+.content input,
+.content textarea {
+  margin-bottom: 1em;
+}
