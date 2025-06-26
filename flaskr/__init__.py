@@ -1,8 +1,6 @@
 import os
-import logging
 
-
-from flask import Flask, redirect, url_for, render_template, request, abort, session, flash
+from flask import Flask, redirect, url_for, render_template, abort, session
 from functools import wraps
 from flask_mongoengine import MongoEngine
 from logging.config import dictConfig
@@ -44,7 +42,7 @@ def create_app(test_config=None):
     except OSError:
         pass
     
-    # #access the database
+    # access the database
     db = MongoEngine()
 
     app.secret_key = app.config['SECRET_KEY']
@@ -84,6 +82,9 @@ def create_app(test_config=None):
 
     from .blog import blog_bp
     app.register_blueprint(blog_bp)
+
+    from .account import account_bp
+    app.register_blueprint(account_bp)
     
     @app.route('/')
     def index():
@@ -104,12 +105,7 @@ def create_app(test_config=None):
     def utility_processor():
         def profile_pic_data(user_id):
             user = SiteUser.objects(id=user_id).first()
-            if user and user.profile_pic and user.profile_pic.image_file:
-                image_data = user.profile_pic.image_file.read()
-                content_type = user.profile_pic.image_file.content_type or 'image/jpeg'
-                base64_data = base64.b64encode(image_data).decode('utf-8')
-                return f"data:{content_type};base64,{base64_data}"
-            return "/static/blank-profile-picture.webp"
+            return user.profile_pic
         return dict(profile_pic_data=profile_pic_data)
 
     return app

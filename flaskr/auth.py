@@ -2,11 +2,13 @@ from flask import (
     Blueprint, flash, redirect, render_template, request, session, url_for
 )
 from functools import wraps
-from .models import SiteUser, Role, Image
+from .models import SiteUser, Role
+import base64
 
 from wtforms import Form, StringField, SubmitField, EmailField, PasswordField
 from wtforms.validators import DataRequired, Length
-from flaskr import bcrypt
+
+from .helper_funcs import validate_unique_credentials, encrypt_user_psw, check_psw
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -27,6 +29,7 @@ def login_required(view):
     @wraps(view)
     def wrapped_view(**kwargs):
         if not session.get('username', ""):
+            flash("Log in to access this page", "error")
             return redirect(url_for('auth.login'))
 
         return view(**kwargs)
@@ -40,22 +43,26 @@ def sign_up():
     if request.method == "POST" and form.validate():
         name = form.name.data
         email = form.email.data
-        password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        password= encrypt_user_psw(psw=form.password.data)
 
         role = Role.objects(name="Normal").first()
-        a_user = SiteUser(name=name, address=email, password=password, role=role, profile_pic=Image.objects(name='default_profile_pic').first())
-        existing_users = SiteUser.objects()
 
-        if not any(a_user.name == u.name for u in existing_users):
+        
+        with open("flaskr/static/blank-profile-picture.webp", "rb") as image_file:
+            buffer = image_file.read()
             
-            a_user.save()
+        content_type = 'image/webp'
+        base64_data = base64.b64encode(buffer).decode("utf-8")
+        repr_str = f"data:{content_type};base64,{base64_data}"
 
+        a_user = SiteUser(name=name, address=email, password=password, role=role, profile_pic=repr_str)
+
+        if validate_unique_credentials(user=a_user):  
+            a_user.save()
             session['username'] = a_user.name
             session['id'] = str(a_user.id)
+            flash('SignUp was successful')
             return redirect(url_for('index'))
-        
-        flash("Username already exists", "error")
-        return redirect(url_for('auth.sign_up'))
 
     return render_template("auth/sign_up.html", form=form)
 
@@ -65,22 +72,21 @@ def login():
     if request.method == 'POST' and form.validate():
         name = form.name.data
         password = form.password.data
+
         user = SiteUser.objects(name=name).first()
-        if not user or not bcrypt.check_password_hash(user.password, password):
-            flash("Invalid Credentials", "error")
-            return render_template('auth/login.html', form=form)
-        
-        else:
+
+        if user and check_psw(encrypted_psw=user.password, unencrypted_psw=password):
             session['username'] = name
             session['id'] = str(user.pk)
             return redirect(url_for('index'))
+        
+        flash("Invalid Credentials", "error")
 
     return render_template('auth/login.html', form=form)
 
 @auth_bp.route('/logout')
 def logout():
     session.pop('username', None)
-    #'session.clear()' maybe
     flash('logged out')
     return redirect(url_for('index'))
 
