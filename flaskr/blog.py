@@ -24,11 +24,20 @@ class UpdatePost(FlaskForm):
     save = SubmitField('Save')
     delete = SubmitField('Delete')
 
-@blog_bp.route('/blogs')
+@blog_bp.route('/blogs/all')
 @login_required
-def blogs():
+def all_blogs():
     posts = Post.objects()
     return render_template('blog/posts.html', posts=posts)
+
+@blog_bp.route('/blogs/<username>')
+@login_required
+def user_blogs(username):
+    if not SiteUser.objects(name=username):
+        flash('That user does not exist')
+        return redirect(url_for('blog.all_blogs'))
+    posts = [post for post in Post.objects() if post.author.name == username]
+    return render_template('blog/posts.html', posts=posts, username=username)
 
 @blog_bp.route('/create', methods=('GET', 'POST'))
 @login_required
@@ -41,7 +50,7 @@ def create():
 
         post = Post(title=title, body=body, author=session['id'])
         post.save()
-        return redirect(url_for('blog.blogs'))
+        return redirect(url_for('blog.all_blogs'))
 
     return render_template('blog/create.html', form=form)
 
@@ -66,7 +75,7 @@ def update(id):
             post.delete()
             flash("Post deleted.")
 
-        return redirect(url_for('blog.blogs'))
+        return redirect(url_for('blog.all_blogs'))
 
     return render_template('blog/updates.html', post=post, form=form)
 
@@ -77,7 +86,7 @@ def delete(id):
         id = str(id)
     post = get_post(id)
     post.delete()
-    return redirect(url_for('blog.blogs'))
+    return redirect(url_for('blog.all_blogs'))
 
 @blog_bp.route('/test')
 @login_required
