@@ -17,7 +17,7 @@
       </p>
       <p>
         {{ form.body.label }}<br>
-        {{ form.body(size=30) }}
+        {{ form.body(rows=10, cols=50) }}
         {% if form.body.errors %}
           <span style="color: red;">{{ form.body.errors[0] }}</span>
         {% endif %}
