@@ -18,7 +18,6 @@
           <h1>{{ post['title'] }}</h1>
           <div class="about">by {{ post['author']['name'] }} on {{ post['created_at'].strftime('%Y-%m-%d') }}</div>
         </div>
-        {# Use the context processor get_post to check permission #}
         {% if get_post(post['id'], only_check=True) %}
           <a class="action" href="{{ url_for('blog.update', id=post['id']) }}">Edit</a>
         {% endif %}
