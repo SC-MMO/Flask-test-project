@@ -12,7 +12,6 @@ body {
       color: white;
       margin: 0 auto;
       overflow-x: hidden;
-      overflow-y: hidden;
       background-image: url("fancy-cushion.webp");
       background-repeat: repeat;
       background-position: top left;
