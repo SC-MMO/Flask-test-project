@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}New Post{% endblock %}</h1>
+  <h1>{% block title %}New Blog{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
 <div class="form-container">
-    <h2>Create a Post</h2>
+    <h2>Create a Blog</h2>
     <form method="POST" action="/create">
       <p>
         {{ form.title.label }}<br>
