@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Hi "{{ session['username'] }}"{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<form method="POST" action="{{ url_for('account.account') }}" enctype="multipart/form-data">
+  <pre class="real-h1">Profile of {{ session['username'] }}</pre>
+  <div class="rounded-rectangle-left">
+    <h1>You're known as</h1>
+    <h2>
+      {{ form.name(class='wtforms-text-input') }}
+    </h2>
+    <h1>Your Email is</h1>
+    <h2>
+      {{ form.email(class='wtforms-text-input') }}
+    </h2>
+    <h1>Set a new password</h1>
+    <h2>
+      {{ form.password(class='wtforms-text-input') }}
+    </h2>
+  </div>
+  <img class="profile-pic" src="{{ profile_pic_data(session['id']) }}" style="width:23rem; height:23rem; padding:0.1rem;" onclick="form.profile_pic"/>
+  {{ form.profile_pic(class="profile-pic-select") }}
+  <button type="submit" class="btn btn-primary submit-user-changes" style="width: 19rem; height: 6rem;">
+    <h1 style="text-align: center;">Save Changes</h1>
+  </button>
+  </form
+{% endblock %}
