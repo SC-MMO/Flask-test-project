@@ -3,6 +3,7 @@
 @import 'style files/post.css';
 @import 'style files/nav.css';
 @import 'style files/account.css';
+@import 'style files/auth.css';
 
 html {
   font-family: sans-serif;
@@ -56,12 +57,13 @@ input[type=submit] {
   padding: 100px;
 }
 
-hr {
-    width:80%;
-    margin:0 auto;
+.hr-posts {
+  color:white;
+  width:80%;
+  margin:0 auto;
 }
 
-.relative-profile-pic-form {
-
-  position: relative;
+.hr-sign-up {
+  width:100%;
+  margin:0 auto;
 }
