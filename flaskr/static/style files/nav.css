@@ -4,6 +4,7 @@ nav {
   right: 0;
   width: 100%;
   z-index: 1030;
+  background-image: linear-gradient(to right, #f5f4f7 , #d8d6dd);
   background: lightgray;
 
   padding: 0 0.5rem;
