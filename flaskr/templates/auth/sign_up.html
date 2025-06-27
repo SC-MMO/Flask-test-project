@@ -4,30 +4,33 @@
 
 {% block content %}
   <div class="form-container">
-    <h2>Sign-Up</h2>
+    
     <form method="POST" action="/auth/sign-up">
-      <p>
-        {{ form.name.label }}<br>
-        {{ form.name(size=30) }}
-        {% if form.name.errors %}
-          <span style="color: red;">{{ form.name.errors[0] }}</span>
-        {% endif %}
-      </p>
-      <p>
-        {{ form.email.label }}<br>
-        {{ form.email(size=30) }}
-        {% if form.email.errors %}
-          <span style="color: red;">{{ form.email.errors[0] }}</span>
-        {% endif %}
-      </p>
-      <p>
-        {{ form.password.label }}<br>
-        {{ form.password(size=30) }}
-        {% if form.password.errors %}
-          <span style="color: red;">{{ form.password.errors[0] }}</span>
-        {% endif %}
-      </p>
-      <p>{{ form.submit() }}</p>
+      <div class="container">
+        <div class="rounded-rectangle-auth">
+
+          <h1>Sign up</h1>
+          <h2>Sign up to continue</h2>
+          <br><br>
+          {{ form.name(class_="form-control bg-transparent border-0 focus-ring text-white" , style="--bs-focus-ring-color: gray", size=32, placeholder="Username (min 5 chars)") }}
+          <hr>
+          <br>
+          {{ form.email(class_="form-control bg-transparent border-0 focus-ring text-white" , style="--bs-focus-ring-color: gray", size=32, placeholder="Email") }}
+          <hr>
+          <br>
+          {{ form.password(class_="form-control bg-transparent border-0 focus-ring text-white" , style="--bs-focus-ring-color: gray", size=32, placeholder="Password (min 5 chars)") }}
+          <hr>
+          <br><br>
+          {{ form.submit(class="btn btn-primary btn-lg") }}
+          <br>
+          <small>
+            Don't have an account?  
+            <a href="/auth/sign-up">Sign Up</a>
+          </small>
+
+        </div>
+      </div>
+
     </form>
   </div>
 {% endblock %}
