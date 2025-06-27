@@ -6,6 +6,7 @@
 
 .post {
   padding-inline: 80px;
+  padding-left: 10%;
 }
 
 .post > header > div:first-of-type {
@@ -25,7 +26,7 @@
 
 .post .body {
   white-space: pre-line;
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .content input,
