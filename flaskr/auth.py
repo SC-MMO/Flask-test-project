@@ -17,12 +17,12 @@ class SignUpForm(Form):
     name = StringField('Your Name', validators=[DataRequired(), Length(min=1, max= 100)])
     email = EmailField('Your Email', validators=[DataRequired(), Length(min=1)])
     password = PasswordField('Your Password', validators=[DataRequired(), Length(min=5, max=100)])
-    submit = SubmitField('Submit')
+    submit = SubmitField('Sign Up')
 
 class LoginForm(Form):
     name = StringField('Your Name', validators=[DataRequired(), Length(min=1, max= 100)])
     password = PasswordField('Your Password', validators=[DataRequired(), Length(min=5, max=100)])
-    submit = SubmitField('Submit')
+    submit = SubmitField('Login')
 
 #Decorator
 def login_required(view):
@@ -63,7 +63,7 @@ def sign_up():
             session['id'] = str(a_user.id)
             flash('SignUp was successful')
             return redirect(url_for('index'))
-
+    
     return render_template("auth/sign_up.html", form=form)
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
