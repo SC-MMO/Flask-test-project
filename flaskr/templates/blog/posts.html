@@ -27,13 +27,13 @@
           <div class="about">by <a href="{{ url_for('blog.user_blogs', username=post['author']['name']) }}">{{ post['author']['name'] }}</a> on {{ post['created_at'].strftime('%Y-%m-%d') }}</div>
         </div>
         {% if get_post(post['id'], only_check=True) %}
-          <a class="action" href="{{ url_for('blog.update', id=post['id']) }}">Edit</a>
+          <a class="action" href="{{ url_for('blog.update', id=post['id']) }}" style="padding-right: 10%;">Edit</a>
         {% endif %}
       </header>
       <p class="body" style="margin-bottom: 20px;">{{ post['body'] }}</p>
     </article>
     {% if not loop.last %}
-      <hr>
+      <hr class="hr-posts">
     {% endif %}
   {% endfor %}
 {% endblock %}
