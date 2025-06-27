@@ -77,9 +77,6 @@ def create_app(test_config=None):
     from .admin import admin_bp
     app.register_blueprint(admin_bp)
 
-    from .upload import upload_bp
-    app.register_blueprint(upload_bp)
-
     from .blog import blog_bp
     app.register_blueprint(blog_bp)
 
@@ -94,10 +91,17 @@ def create_app(test_config=None):
     @app.errorhandler(404)
     def page_not_found(e):
         return render_template('errors/404.html'), 404
+    
     @app.route('/404')
     def four_o_four():
         abort(404)
     
+    from flask import flash
+    @app.route('/test3')
+    def test():
+        flash("test")
+        return redirect(url_for('index'))
+
     import base64
     from .models import SiteUser
 
