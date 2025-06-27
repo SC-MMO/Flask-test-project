@@ -15,15 +15,15 @@
   <div class="rounded-rectangle-left">
     <h1>You're known as</h1>
     <h2>
-      {{ form.name(class='wtforms-text-input') }}
+      {{ form.name(class='wtforms-text-input-account') }}
     </h2>
     <h1>Your Email is</h1>
     <h2>
-      {{ form.email(class='wtforms-text-input') }}
+      {{ form.email(class='wtforms-text-input-account') }}
     </h2>
     <h1>Set a new password</h1>
     <h2>
-      {{ form.password(class='wtforms-text-input') }}
+      {{ form.password(class='wtforms-text-input-account') }}
     </h2>
   </div>
   <img class="profile-pic" src="{{ profile_pic_data(session['id']) }}" style="width:23rem; height:23rem; padding:0.1rem;" onclick="form.profile_pic"/>
